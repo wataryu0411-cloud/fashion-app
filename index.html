@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ファッション提案システム</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: linear-gradient(135deg, #f4f4f5, #e5e7eb);
+      color: #111827;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .app {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 32px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      color: #d1d5db;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    main {
+      padding: 32px;
+    }
+
+    .section {
+      margin-bottom: 28px;
+      padding: 24px;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      background: #fafafa;
+    }
+
+    .section h2 {
+      font-size: 20px;
+      margin-bottom: 16px;
+      border-left: 6px solid #111827;
+      padding-left: 10px;
+    }
+
+    .question {
+      margin-bottom: 22px;
+    }
+
+    .question label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    select,
+    input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 16px;
+      background: white;
+    }
+
+    .scale {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .scale input {
+      display: none;
+    }
+
+    .scale label {
+      text-align: center;
+      padding: 10px 4px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: normal;
+      transition: 0.2s;
+    }
+
+    .scale input:checked + label {
+      background: #111827;
+      color: white;
+      border-color: #111827;
+      transform: translateY(-2px);
+    }
+
+    .note {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .primary {
+      background: #111827;
+      color: white;
+    }
+
+    .secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    .result {
+      display: none;
+      margin-top: 32px;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+      background: white;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .result-image {
+      width: 100%;
+      height: 360px;
+      object-fit: cover;
+      background: #e5e7eb;
+    }
+
+    .result-content {
+      padding: 28px;
+    }
+
+    .result-content h2 {
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #111827;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .items {
+      margin: 16px 0;
+      padding-left: 20px;
+      line-height: 1.9;
+    }
+
+    .reason {
+      background: #f3f4f6;
+      border-radius: 14px;
+      padding: 16px;
+      line-height: 1.8;
+      margin-top: 16px;
+    }
+
+    .shop-link {
+      display: inline-block;
+      margin-top: 18px;
+      background: #2563eb;
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 999px;
+      font-weight: bold;
+    }
+
+    .error {
+      display: none;
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      padding: 14px;
+      border-radius: 12px;
+      margin-top: 16px;
+      line-height: 1.6;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #6b7280;
+      font-size: 13px;
+    }
+    .scale {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .result-image {
+      height: 250px;
+    }
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    .choice-buttons {
+      display: grid;
+      gap: 12px;
+    }
+
+    .choice-button {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid #d1d5db;
+      border-radius: 14px;
+      background: white;
+      color: #111827;
+      text-align: left;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    } 
+
+    .choice-button:hover {
+      border-color: #111827;
+      background: #f3f4f6;
+    }
+
+    .choice-button.selected {
+      background: #111827;
+      color: white;
+      border-color: #111827;
+    }
+
+    .step-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 12px;
+      }
+
+      main {
+        padding: 20px;
+      }
+
+      header {
+        padding: 24px;
+      }
+
+      
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>ファッション提案システム</h1>
+      <p>
+        体格・顔や髪の特徴・好みに関する質問に答えると、<br />
+        条件分岐とスコア計算によりおすすめの服装を提示します。
+      </p>
+    </header>
+
+    <main>
+      <form id="fashionForm">
+        <!-- 1. 目的 -->
+        <section class="section step active" id="step1">
+          <h2>1. 行く場所・目的</h2>
+
+          <div class="choice-buttons">
+            <button type="button" class="choice-button" onclick="selectScene('school', this)">○ 学校</button>
+            <button type="button" class="choice-button" onclick="selectScene('shopping', this)">○ 買い物</button>
+            <button type="button" class="choice-button" onclick="selectScene('date', this)">○ デート</button>
+            <button type="button" class="choice-button" onclick="selectScene('friend', this)">○ 友達と遊ぶ</button>
+            <button type="button" class="choice-button" onclick="selectScene('formal', this)">○ きれいめな場所</button>
+          </div>
+
+          <input type="hidden" id="scene" required />
+        </section>
+
+        <!-- 2. 性別 -->
+        <section class="section step" id="step2">
+          <h2>2. 性別</h2>
+
+          <div class="choice-buttons">
+            <button type="button" class="choice-button" onclick="selectGender('male', this)">○ 男性</button>
+            <button type="button" class="choice-button" onclick="selectGender('female', this)">○ 女性</button>
+          </div>
+
+          <input type="hidden" id="gender" required />
+
+          <div class="step-buttons">
+            <button type="button" class="secondary" onclick="prevStep()">戻る</button>
+          </div>
+        </section>
+
+        <!-- 3. 身長・体重・体型 -->
+        <section class="section step" id="step3">
+          <h2>3. 身長・体重・体型</h2>
+
+          <div class="question">
+            <label for="heightCm">身長</label>
+            <input id="heightCm" type="number" placeholder="例：178" required />
+            <p class="note">cm単位で入力してください。例：178</p>
+          </div>
+
+          <div class="question">
+            <label for="weightKg">体重</label>
+            <input id="weightKg" type="number" placeholder="例：70" />
+            <p class="note">任意入力です。kg単位で入力してください。</p>
+          </div>
+
+          <div class="question">
+            <label for="bodyType">体型</label>
+            <select id="bodyType" required>
+              <option value="">選択してください</option>
+              <option value="slim">細め</option>
+              <option value="normal">標準</option>
+              <option value="strong">がっしり</option>
+            </select>
+          </div>
+
+          <div class="step-buttons">
+            <button type="button" class="secondary" onclick="prevStep()">戻る</button>
+            <button type="button" class="primary" onclick="nextStep()">次へ</button>
+            </div>
+        </section>
+
+        <!-- 4. 顔・髪の特徴 -->
+        <section class="section step" id="step4">
+          <h2>4. 顔・髪の特徴</h2>
+
+          <div class="question">
+            <label>顔に立体感があると思いますか？</label>
+            <div class="scale" data-name="faceDepth"></div>
+          </div>
+
+          <div class="question">
+            <label>目や眉がはっきりしていると思いますか？</label>
+            <div class="scale" data-name="eyeBrow"></div>
+          </div>
+
+          <div class="question">
+            <label for="skinTone">肌の色</label>
+            <select id="skinTone" required>
+              <option value="">選択してください</option>
+              <option value="bright">明るめ</option>
+              <option value="natural">普通</option>
+              <option value="deep">健康的・暗め</option>
+            </select>
+          </div>
+
+          <div class="question">
+            <label for="hairColor">髪の色</label>
+            <select id="hairColor" required>
+              <option value="">選択してください</option>
+              <option value="black">黒髪</option>
+              <option value="brown">茶髪</option>
+              <option value="bright">明るい髪色</option>
+            </select>
+          </div>
+
+          <div class="question">
+            <label for="hairType">髪質</label>
+            <select id="hairType" required>
+              <option value="">選択してください</option>
+              <option value="straight">直毛</option>
+              <option value="wavy">くせ毛・ウェーブ</option>
+              <option value="volume">ボリュームがある</option>
+            </select>
+          </div>
+
+          <div class="step-buttons">
+            <button type="button" class="secondary" onclick="prevStep()">戻る</button>
+            <button type="button" class="primary" onclick="nextStep()">次へ</button>
+          </div>
+        </section>
+
+        <!-- 5. 好み -->
+        <section class="section step" id="step5">
+          <h2>5. 好み</h2>
+
+          <div class="question">
+            <label>シンプルな服が好きですか？</label>
+            <div class="scale" data-name="simple"></div>
+          </div>
+
+          <div class="question">
+            <label>ストリート系の服が好きですか？</label>
+            <div class="scale" data-name="street"></div>
+          </div>
+
+          <div class="question">
+            <label>きれいめな服が好きですか？</label>
+            <div class="scale" data-name="clean"></div>
+          </div>
+
+          <div class="question">
+            <label>黒・白・グレーなどの落ち着いた色が好きですか？</label>
+            <div class="scale" data-name="monotone"></div>
+          </div>
+
+          <div class="question">
+            <label>アクセサリーをつけたいですか？</label>
+            <div class="scale" data-name="accessory"></div>
+          </div>
+
+          <div class="step-buttons">
+            <button type="button" class="secondary" onclick="prevStep()">戻る</button>
+            <button type="submit" class="primary">診断する</button>
+          </div>
+        </section>
+
+        <div id="error" class="error"></div>
+      </form>
+
+      <section id="step6" class="section step result">
+        <img id="resultImage" class="result-image" src="" alt="おすすめ服装の画像" />
+        <div class="result-content">
+          <span id="resultTag" class="tag"></span>
+          <h2 id="resultTitle"></h2>
+          <p id="resultSummary"></p>
+
+          <ul id="resultItems" class="items"></ul>
+
+          <div class="reason">
+            <strong>提案理由</strong>
+            <p id="resultReason"></p>
+          </div>
+
+          <a id="shopLink" class="shop-link" href="#" target="_blank" rel="noopener noreferrer">
+            商品を検索する
+          </a>
+
+          <div class="step-buttons">
+            <button type="button" class="secondary" onclick="prevStep()">戻る</button>
+            <button type="button" class="primary" onclick="resetForm()">最初からやり直す</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      課題研究用サンプルプログラム / 選択式質疑応答によるファッション提案
+    </footer>
+  </div>
+
+  <script>
+    // 5段階評価ボタンを自動生成する
+    const scaleTexts = [
+      "1\nそう思わない",
+      "2",
+      "3\nどちらでもない",
+      "4",
+      "5\nそう思う"
+    ];
+
+    let currentStep = 1;
+    const maxStep = 6;
+
+    function showStep(stepNumber) {
+      document.querySelectorAll(".step").forEach((step) => {
+        step.classList.remove("active");
+      });
+
+      document.getElementById(`step${stepNumber}`).classList.add("active");
+      currentStep = stepNumber;
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function nextStep() {
+      if (currentStep < maxStep) {
+        showStep(currentStep + 1);
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        showStep(currentStep - 1);
+      }
+    }
+
+
+    function selectScene(value, button) {
+      document.getElementById("scene").value = value;
+
+      document.querySelectorAll("#step1 .choice-button").forEach((btn) => {
+        btn.classList.remove("selected");
+      });
+
+      button.classList.add("selected");
+
+      setTimeout(() => {
+        nextStep();
+      }, 200);
+    }
+
+    function selectGender(value, button) {
+      document.getElementById("gender").value = value;
+
+      document.querySelectorAll("#step2 .choice-button").forEach((btn) => {
+        btn.classList.remove("selected");
+      });
+
+      button.classList.add("selected");
+
+      setTimeout(() => {
+        nextStep();
+      }, 200);
+    }
+
+    document.querySelectorAll(".scale").forEach((scaleBox) => {
+      const name = scaleBox.dataset.name;
+
+      for (let i = 1; i <= 5; i++) {
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = name;
+        input.id = `${name}${i}`;
+        input.value = i;
+        input.required = true;
+
+        const label = document.createElement("label");
+        label.htmlFor = `${name}${i}`;
+        label.innerText = scaleTexts[i - 1];
+
+        scaleBox.appendChild(input);
+        scaleBox.appendChild(label);
+      }
+    });
+
+    const outfits = {
+      male: {
+        street: {
+          tag: "男性向けストリート系",
+          title: "オーバーサイズストリートコーデ",
+          summary: "動きやすさと個性を重視した男性向けの服装です。",
+          items: [
+            "オーバーサイズTシャツまたはパーカー",
+            "ワイドパンツまたはカーゴパンツ",
+            "スニーカー",
+            "キャップまたはシルバーアクセサリー"
+          ],
+          image: "画像URL",
+          keyword: "メンズ ストリート オーバーサイズ ワイドパンツ"
+        },
+        clean: {
+          tag: "男性向けきれいめ系",
+          title: "シンプルきれいめコーデ",
+          summary: "清潔感を重視した男性向けの服装です。",
+          items: [
+            "無地トップス",
+            "スラックス",
+            "革靴風スニーカー",
+            "腕時計"
+          ],
+      image: "画像URL",
+      keyword: "メンズ きれいめ スラックス"
+    }
+  },
+
+  female: {
+    street: {
+      tag: "女性向けストリート系",
+      title: "オーバーサイズストリートコーデ",
+      summary: "ゆるめのシルエットを取り入れた女性向けの服装です。",
+      items: [
+        "オーバーサイズTシャツまたはスウェット",
+        "ワイドパンツまたはカーゴスカート",
+        "厚底スニーカー",
+        "キャップやアクセサリー"
+      ],
+      image: "画像URL",
+      keyword: "レディース ストリート オーバーサイズ コーデ"
+    },
+
+    clean: {
+      tag: "女性向けきれいめ系",
+      title: "シンプルきれいめコーデ",
+      summary: "清潔感と上品さを重視した女性向けの服装です。",
+      items: [
+        "ブラウスまたはきれいめトップス",
+        "スラックスまたはロングスカート",
+        "パンプスまたはきれいめスニーカー",
+        "小さめのアクセサリー"
+      ],
+      image: "画像URL",
+      keyword: "レディース きれいめ シンプル コーデ"
+    }
+  }
+};
+
+    function getRadioValue(name) {
+      const checked = document.querySelector(`input[name="${name}"]:checked`);
+      return checked ? Number(checked.value) : null;
+    }
+
+    function showError(message) {
+      const error = document.getElementById("error");
+      error.textContent = message;
+      error.style.display = "block";
+    }
+
+    function hideError() {
+      const error = document.getElementById("error");
+      error.textContent = "";
+      error.style.display = "none";
+    }
+
+    document.getElementById("fashionForm").addEventListener("submit", function (event) {
+      event.preventDefault();
+      hideError();
+
+      const scene = document.getElementById("scene").value;
+      const bodyType = document.getElementById("bodyType").value;
+      const skinTone = document.getElementById("skinTone").value;
+      const hairColor = document.getElementById("hairColor").value;
+      const hairType = document.getElementById("hairType").value;
+      const gender = document.getElementById("gender").value;
+
+      const heightCm = Number(document.getElementById("heightCm").value);
+      const weightKg = Number(document.getElementById("weightKg").value);
+      const size = getSizeCategory(gender, heightCm, weightKg, bodyType)
+      
+      const faceDepth = getRadioValue("faceDepth");
+      const eyeBrow = getRadioValue("eyeBrow");
+      const simple = getRadioValue("simple");
+      const street = getRadioValue("street");
+      const clean = getRadioValue("clean");
+      const monotone = getRadioValue("monotone");
+      const accessory = getRadioValue("accessory");
+
+      function getSizeCategory(gender, heightCm, weightKg, bodyType) {
+        const sizes = ["S", "M", "L", "LL"];
+        let index = 1;
+        
+        // 身長で基本サイズを決める
+        if (gender === "male") {
+          if (heightCm < 165) index = 0;
+          else if (heightCm < 175) index = 1;
+          else if (heightCm < 185) index = 2;
+          else index = 3;
+        }
+
+        if (gender === "female") {
+          if (heightCm < 155) index = 0;
+          else if (heightCm < 165) index = 1;
+          else if (heightCm < 172) index = 2;
+          else index = 3;
+        }
+
+        // 体重が入力されている場合だけBMIで補正
+        if (weightKg > 0) {
+          const heightM = heightCm / 100;
+          const bmi = weightKg / (heightM * heightM);
+
+          if (bmi >= 25) {
+            index += 1;
+          } else if (bmi < 18.5) {
+            index -= 1;
+          }
+        }
+
+        // 体型でも補正
+        if (bodyType === "strong") {
+          index += 1;
+        }
+
+        if (bodyType === "slim") {
+          index -= 1;
+        }
+
+        // S未満・LL超えにならないようにする
+        if (index < 0) index = 0;
+        if (index > 3) index = 3;
+
+        return sizes[index];
+      }
+      if (
+        !scene || !gender || Number.isNaN(heightCm) || heightCm <= 0 || !bodyType || !skinTone || !hairColor || !hairType ||
+        !faceDepth || !eyeBrow || !simple || !street || !clean || !monotone || !accessory 
+      ) {
+        showError("未回答の項目があります。質問に回答してください。");
+        return;
+      }
+
+
+      // 好み・外見の特徴をスコア化する
+      const scores = {
+        street: 0,
+        clean: 0,
+        simple: 0,
+        mode: 0,
+        casual: 0
+      };
+
+      scores.street += street * 2;
+      scores.clean += clean * 2;
+      scores.simple += simple * 2;
+      scores.mode += monotone * 1.5;
+      scores.casual += 5;
+
+      // 顔や目鼻立ちがはっきりしている場合は、黒やモード寄りが似合いやすい設定
+      if (faceDepth >= 4) scores.mode += 3;
+      if (eyeBrow >= 4) scores.mode += 2;
+
+      // アクセサリーを好む場合はストリート・モードに加点
+      if (accessory >= 4) {
+        scores.street += 2;
+        scores.mode += 2;
+      }
+
+      // 場面による補正
+      if (scene === "school") {
+        scores.simple += 3;
+        scores.casual += 2;
+      }
+      if (scene === "shopping" || scene === "friend") {
+        scores.street += 2;
+        scores.casual += 3;
+      }
+      if (scene === "date" || scene === "formal") {
+        scores.clean += 4;
+      }
+
+      // 体格による補正
+      if (size === "L") {
+        scores.street += 1;
+        scores.mode += 1;
+      }
+
+      if (size === "LL") {
+        scores.street += 2;
+        scores.mode += 2;
+      }
+
+      if (size === "S") {
+        scores.simple += 1;
+        scores.clean += 1;
+      }
+      if (bodyType === "strong") {
+        scores.street += 2;
+      }
+      if (bodyType === "slim") {
+        scores.mode += 1;
+        scores.clean += 1;
+      }
+
+      // 色・髪の特徴による補正
+      if (hairColor === "black") {
+        scores.mode += 2;
+        scores.simple += 1;
+      }
+      if (hairColor === "brown" || hairColor === "bright") {
+        scores.casual += 2;
+      }
+      if (skinTone === "bright") {
+        scores.clean += 1;
+        scores.simple += 1;
+      }
+      if (skinTone === "deep") {
+        scores.street += 1;
+        scores.mode += 1;
+      }
+      if (hairType === "volume" || hairType === "wavy") {
+        scores.street += 1;
+        scores.casual += 1;
+      }
+
+
+      const bestType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+
+      let reason = "回答結果をスコア化し、最も点数が高かった系統を選びました。";
+      reason += ` 特に、好みの回答・行く場所・体格・髪や肌の特徴を組み合わせて判定しています。`;
+
+      displayResult(gender, bestType, reason);
+    });
+
+    function displayResult(gender,type, reasonText) {
+      const outfit = outfits[gender][type];
+
+      document.getElementById("resultTag").textContent = outfit.tag;
+      document.getElementById("resultTitle").textContent = outfit.title;
+      document.getElementById("resultSummary").textContent = outfit.summary;
+      document.getElementById("resultImage").src = outfit.image;
+      document.getElementById("resultImage").alt = outfit.title;
+      document.getElementById("resultReason").textContent = reasonText;
+
+      const itemList = document.getElementById("resultItems");
+      itemList.innerHTML = "";
+      outfit.items.forEach((item) => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        itemList.appendChild(li);
+      });
+
+      // ZOZOTOWNの検索ページへ飛ばす。学校発表では「販売サイトリンク」として説明できる。
+      const searchUrl = `https://zozo.jp/search/?p_keyv=${encodeURIComponent(outfit.keyword)}`;
+      const shopLink = document.getElementById("shopLink");
+      shopLink.href = searchUrl;
+      shopLink.textContent = `「${outfit.keyword}」を購入サイトで検索する`;
+    
+      showStep(6);
+    }
+
+    function resetForm() {
+      document.getElementById("fashionForm").reset();
+      hideError();
+
+      document.querySelectorAll(".choice-button").forEach((btn) => {
+        btn.classList.remove("selected");
+      });
+
+      showStep(1);
+    }
+  </script>
+</body>
+</html>
