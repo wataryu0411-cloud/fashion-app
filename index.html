@@ -231,19 +231,32 @@
       color: #6b7280;
       font-size: 13px;
     }
-    .scale {
-        grid-template-columns: repeat(3, 1fr);
-    }
 
     .result-image {
       height: 250px;
     }
+
     .step {
       display: none;
+      opacity: 0;
+      transform: translateY(12px);
     }
 
     .step.active {
       display: block;
+      animation: fadeInStep 0.35s ease forwards;
+    }
+
+    @keyframes fadeInStep {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .choice-buttons {
@@ -274,6 +287,94 @@
       color: white;
       border-color: #111827;
     }
+    .circle-choice-area {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 28px 24px;
+      justify-items: center;
+      align-items: center;
+      margin-top: 24px;
+    }
+
+    .circle-choice-area .circle-button:nth-child(1) {
+      grid-column: 1 / span 2;
+    }
+
+    .circle-choice-area .circle-button:nth-child(2) {
+      grid-column: 3 / span 2;
+    }
+
+    .circle-choice-area .circle-button:nth-child(3) {
+      grid-column: 5 / span 2;
+    }
+
+    .circle-choice-area .circle-button:nth-child(4) {
+      grid-column: 2 / span 2;
+    }
+
+    .circle-choice-area .circle-button:nth-child(5) {
+      grid-column: 4 / span 2;
+    }
+
+    .circle-button {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      border: 3px solid #8b4513;
+      background: #f4b183;
+      color: #3b1f0f;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(139, 69, 19, 0.2);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    .circle-button:hover {
+      background: #f7c59f;
+      transform: translateY(-6px);
+      box-shadow: 0 16px 28px rgba(139, 69, 19, 0.28);
+    }
+
+    .circle-button:active {
+      transform: scale(0.92);
+      box-shadow: 0 4px 10px rgba(139, 69, 19, 0.25);
+    }
+
+    .circle-button.selected {
+      background: #e07a3f;
+      color: white;
+      transform: scale(1.08);
+    }
+
+    .circle-button.pop {
+      animation: popTouch 0.35s ease;
+    }
+
+    @keyframes popTouch {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.12);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .circle-choice-area {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      .circle-button {
+        width: 135px;
+        height: 135px;
+        font-size: 16px;
+      }
+    }
 
     .step-buttons {
       display: flex;
@@ -297,6 +398,36 @@
 
       
     }
+    #rakutenItems{
+    margin-top:25px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+
+.item-card{
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:15px;
+    text-align:center;
+    background:#fff;
+}
+
+.item-card img{
+    width:100%;
+    height:180px;
+    object-fit:contain;
+}
+
+.item-card a{
+    display:inline-block;
+    margin-top:10px;
+    padding:8px 16px;
+    background:#bf0000;
+    color:#fff;
+    text-decoration:none;
+    border-radius:20px;
+}
   </style>
 </head>
 <body>
@@ -315,12 +446,12 @@
         <section class="section step active" id="step1">
           <h2>1. 行く場所・目的</h2>
 
-          <div class="choice-buttons">
-            <button type="button" class="choice-button" onclick="selectScene('school', this)">○ 学校</button>
-            <button type="button" class="choice-button" onclick="selectScene('shopping', this)">○ 買い物</button>
-            <button type="button" class="choice-button" onclick="selectScene('date', this)">○ デート</button>
-            <button type="button" class="choice-button" onclick="selectScene('friend', this)">○ 友達と遊ぶ</button>
-            <button type="button" class="choice-button" onclick="selectScene('formal', this)">○ きれいめな場所</button>
+          <div class="circle-choice-area">
+            <button type="button" class="circle-button" onclick="selectScene('school', this)">学校</button>
+            <button type="button" class="circle-button" onclick="selectScene('shopping', this)">買い物</button>
+            <button type="button" class="circle-button" onclick="selectScene('date', this)">デート</button>
+          <button type="button" class="circle-button" onclick="selectScene('friend', this)">友達と遊ぶ</button>
+          <button type="button" class="circle-button" onclick="selectScene('formal', this)">きれいめな場所</button>
           </div>
 
           <input type="hidden" id="scene" required />
@@ -348,13 +479,13 @@
 
           <div class="question">
             <label for="heightCm">身長</label>
-            <input id="heightCm" type="number" placeholder="例：178" required />
+            <input id="heightCm" type="number" min="1" step="1" placeholder="例：178" required />
             <p class="note">cm単位で入力してください。例：178</p>
           </div>
 
           <div class="question">
             <label for="weightKg">体重</label>
-            <input id="weightKg" type="number" placeholder="例：70" />
+            <input id="weightKg" type="number" min="1" step="1" placeholder="例：70" />
             <p class="note">任意入力です。kg単位で入力してください。</p>
           </div>
 
@@ -479,7 +610,7 @@
           <a id="shopLink" class="shop-link" href="#" target="_blank" rel="noopener noreferrer">
             商品を検索する
           </a>
-
+          <div id="rakutenItems"></div>
           <div class="step-buttons">
             <button type="button" class="secondary" onclick="prevStep()">戻る</button>
             <button type="button" class="primary" onclick="resetForm()">最初からやり直す</button>
@@ -518,9 +649,86 @@
     }
 
     function nextStep() {
+      if (!validateCurrentStep()) {
+        return;
+      }
+
       if (currentStep < maxStep) {
+        hideError();
         showStep(currentStep + 1);
       }
+    }
+
+    function validateCurrentStep() {
+      hideError();
+
+      if (currentStep === 1) {
+        const scene = document.getElementById("scene").value;
+
+        if (!scene) {
+          showError("行く場所・目的を選択してください。");
+          return false;
+        }
+      }
+
+      if (currentStep === 2) {
+        const gender = document.getElementById("gender").value;
+
+        if (!gender) {
+          showError("性別を選択してください。");
+          return false;
+        }
+      }
+
+      if (currentStep === 3) {
+        const heightCm = Number(document.getElementById("heightCm").value);
+        const weightValue = document.getElementById("weightKg").value;
+        const weightKg = Number(weightValue);
+        const bodyType = document.getElementById("bodyType").value;
+
+        if (!Number.isInteger(heightCm) || heightCm <= 0) {
+          showError("身長は自然数で入力してください。例：178");
+          return false;
+        }
+      // 体重は任意。入力されている場合だけ自然数チェックする
+        if (weightValue !== "" && (!Number.isInteger(weightKg) || weightKg <= 0)) {
+          showError("体重は自然数で入力してください。例：70");
+          return false;
+        }
+
+        if (!bodyType) {
+          showError("体型を選択してください。");
+          return false;
+        }
+      }
+
+      if (currentStep === 4) {
+        const faceDepth = getRadioValue("faceDepth");
+        const eyeBrow = getRadioValue("eyeBrow");
+        const skinTone = document.getElementById("skinTone").value;
+        const hairColor = document.getElementById("hairColor").value;
+        const hairType = document.getElementById("hairType").value;
+
+        if (!faceDepth || !eyeBrow || !skinTone || !hairColor || !hairType) {
+          showError("顔・髪の特徴をすべて回答してください。");
+          return false;
+        }
+      }
+
+      if (currentStep === 5) {
+        const simple = getRadioValue("simple");
+        const street = getRadioValue("street");
+        const clean = getRadioValue("clean");
+        const monotone = getRadioValue("monotone");
+        const accessory = getRadioValue("accessory");
+
+        if (!simple || !street || !clean || !monotone || !accessory) {
+          showError("好みの質問をすべて回答してください。");
+          return false;
+        }
+      }
+
+      return true;
     }
 
     function prevStep() {
@@ -533,15 +741,17 @@
     function selectScene(value, button) {
       document.getElementById("scene").value = value;
 
-      document.querySelectorAll("#step1 .choice-button").forEach((btn) => {
+      document.querySelectorAll("#step1 .circle-button").forEach((btn) => {
         btn.classList.remove("selected");
+        btn.classList.remove("pop");
       });
 
       button.classList.add("selected");
+      button.classList.add("pop");
 
       setTimeout(() => {
         nextStep();
-      }, 200);
+      }, 350);
     }
 
     function selectGender(value, button) {
@@ -843,25 +1053,116 @@
         itemList.appendChild(li);
       });
 
-      // ZOZOTOWNの検索ページへ飛ばす。学校発表では「販売サイトリンク」として説明できる。
-      const searchUrl = `https://zozo.jp/search/?p_keyv=${encodeURIComponent(outfit.keyword)}`;
-      const shopLink = document.getElementById("shopLink");
-      shopLink.href = searchUrl;
-      shopLink.textContent = `「${outfit.keyword}」を購入サイトで検索する`;
-    
-      showStep(6);
+     const APPLICATION_ID = "7e3526e2-439e-4d35-8522-ed6866b79fb1";
+     const ACCESS_KEY = "pk_rl8IqKRQy8n4zmZ0IKErGkDIipM3fGDzvs9suIKhKMb";
+
+     const shopLink = document.getElementById("shopLink");
+     shopLink.style.display = "none";
+
+     const area = document.getElementById("rakutenItems");
+     area.innerHTML = "<p>楽天市場の商品を検索中...</p>";
+
+    const url =
+    `https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601?applicationId=${APPLICATION_ID}&keyword=${encodeURIComponent(outfit.keyword)}&hits=4`;
+
+     fetch(url)
+.then(res => res.json())
+.then(data => {
+
+    area.innerHTML = "";
+
+    if (!data.items || data.items.length === 0) {
+        area.innerHTML = "<p>商品が見つかりませんでした。</p>";
+        showStep(6);
+        return;
+    }
+
+    data.items.forEach(item => {
+
+        area.innerHTML += `
+        <div class="item-card">
+            <img src="${item.mediumImageUrls[0].imageUrl}" alt="">
+            <h4>${item.itemName}</h4>
+            <p>${item.itemPrice.toLocaleString()}円</p>
+
+            <a href="${item.itemUrl}" target="_blank">
+                楽天市場で見る
+            </a>
+        </div>
+        `;
+
+    });
+
+    showStep(6);
+
+})
+.catch(error => {
+    console.error(error);
+    area.innerHTML = "<p>楽天APIの取得に失敗しました。</p>";
+    showStep(6);
+});
     }
 
     function resetForm() {
       document.getElementById("fashionForm").reset();
       hideError();
 
-      document.querySelectorAll(".choice-button").forEach((btn) => {
+      document.querySelectorAll(".choice-button, .circle-button").forEach((btn) => {
         btn.classList.remove("selected");
+        btn.classList.remove("pop");
       });
 
       showStep(1);
     }
+    // 身長でEnterを押したら体重欄へ移動
+    document.getElementById("heightCm").addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        document.getElementById("weightKg").focus();
+      }
+    });
+
+    // 体重でEnterを押したら体型欄へ移動
+    document.getElementById("weightKg").addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        document.getElementById("bodyType").focus();
+      }
+    });
+
+    let bodyTypeEnterReady = false;
+
+    document.getElementById("bodyType").addEventListener("change", function () {
+      bodyTypeEnterReady = false;
+    });
+
+    document.getElementById("bodyType").addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+
+        const bodyType = document.getElementById("bodyType").value;
+
+        if (!bodyType) {
+          showError("体型を選択してください。");
+          return;
+        }
+
+      // 1回目のEnter：選択を決定した扱い
+        if (!bodyTypeEnterReady) {
+          hideError();
+          bodyTypeEnterReady = true;
+          showError("もう一度Enterを押すと次へ進みます。");
+          return;
+        }
+
+        // 2回目のEnter：次へ進む
+        hideError();
+        bodyTypeEnterReady = false;
+        nextStep();
+      }
+    });
+    //python3 -m http.server 8000
+    
   </script>
 </body>
 </html>
